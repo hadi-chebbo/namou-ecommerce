@@ -1,4 +1,4 @@
-require("dotenv").config({ path: "apps/api/.env" });
+require("dotenv").config({ path: ".env" });
 
 module.exports = {
   development: {
