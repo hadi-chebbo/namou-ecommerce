@@ -1,8 +1,8 @@
 {
-  "name": "@namou/db",
+  "name": "@ecommerce/db",
   "version": "1.0.0",
   "private": true,
-  "description": "Shared database package for the Namou e-commerce platform",
+  "description": "Shared database package for the e-commerce platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

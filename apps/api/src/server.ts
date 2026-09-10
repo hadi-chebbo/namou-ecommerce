@@ -1,6 +1,6 @@
 import "dotenv/config";
 import app from "./app";
-import { sequelize } from "@namou/db";
+import { sequelize } from "@ecommerce/db";
 
 const PORT = process.env.PORT || 3000;
 
