@@ -7,44 +7,49 @@ import {
 } from "sequelize";
 import sequelize from "../sequelize";
 
-class User extends Model<
-  InferAttributes<User>,
-  InferCreationAttributes<User>
+class Variant extends Model<
+  InferAttributes<Variant>,
+  InferCreationAttributes<Variant>
 > {
   declare id: CreationOptional<string>;
-  declare name: string;
-  declare email: string;
-  declare passwordHash: string;
-  declare emailVerifiedAt: Date | null;
+  declare productId: string;
+  declare options: Record<string, string>;
+  declare price: string;
+  declare stockQuantity: number;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 }
 
-User.init(
+Variant.init(
   {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    name: {
-      type: DataTypes.STRING,
+    productId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      field: "product_id",
+    },
+    options: {
+      type: DataTypes.JSONB,
       allowNull: false,
     },
-    email: {
-      type: DataTypes.STRING,
+    price: {
+      type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
-      unique: true,
+      validate: {
+        min: 0.01,
+      },
     },
-    passwordHash: {
-      type: DataTypes.STRING,
+    stockQuantity: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      field: "password_hash",
-    },
-    emailVerifiedAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      field: "email_verified_at",
+      field: "stock_quantity",
+      validate: {
+        min: 0,
+      },
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -59,10 +64,15 @@ User.init(
   },
   {
     sequelize,
-    tableName: "users",
+    tableName: "variants",
     timestamps: true,
     underscored: true,
+    indexes: [
+      {
+        fields: ["product_id"],
+      },
+    ],
   },
 );
 
-export default User;
+export default Variant;

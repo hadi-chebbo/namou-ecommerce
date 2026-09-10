@@ -7,44 +7,28 @@ import {
 } from "sequelize";
 import sequelize from "../sequelize";
 
-class User extends Model<
-  InferAttributes<User>,
-  InferCreationAttributes<User>
+class Cart extends Model<
+  InferAttributes<Cart>,
+  InferCreationAttributes<Cart>
 > {
   declare id: CreationOptional<string>;
-  declare name: string;
-  declare email: string;
-  declare passwordHash: string;
-  declare emailVerifiedAt: Date | null;
+  declare userId: string;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 }
 
-User.init(
+Cart.init(
   {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    email: {
-      type: DataTypes.STRING,
+    userId: {
+      type: DataTypes.UUID,
       allowNull: false,
       unique: true,
-    },
-    passwordHash: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      field: "password_hash",
-    },
-    emailVerifiedAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      field: "email_verified_at",
+      field: "user_id",
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -59,10 +43,10 @@ User.init(
   },
   {
     sequelize,
-    tableName: "users",
+    tableName: "carts",
     timestamps: true,
     underscored: true,
   },
 );
 
-export default User;
+export default Cart;

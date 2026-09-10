@@ -7,44 +7,47 @@ import {
 } from "sequelize";
 import sequelize from "../sequelize";
 
-class User extends Model<
-  InferAttributes<User>,
-  InferCreationAttributes<User>
+class CartItem extends Model<
+  InferAttributes<CartItem>,
+  InferCreationAttributes<CartItem>
 > {
   declare id: CreationOptional<string>;
-  declare name: string;
-  declare email: string;
-  declare passwordHash: string;
-  declare emailVerifiedAt: Date | null;
+  declare cartId: string;
+  declare productId: string;
+  declare variantId: string | null;
+  declare quantity: number;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 }
 
-User.init(
+CartItem.init(
   {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    name: {
-      type: DataTypes.STRING,
+    cartId: {
+      type: DataTypes.UUID,
       allowNull: false,
+      field: "cart_id",
     },
-    email: {
-      type: DataTypes.STRING,
+    productId: {
+      type: DataTypes.UUID,
       allowNull: false,
-      unique: true,
+      field: "product_id",
     },
-    passwordHash: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      field: "password_hash",
-    },
-    emailVerifiedAt: {
-      type: DataTypes.DATE,
+    variantId: {
+      type: DataTypes.UUID,
       allowNull: true,
-      field: "email_verified_at",
+      field: "variant_id",
+    },
+    quantity: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        min: 1,
+      },
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -59,10 +62,15 @@ User.init(
   },
   {
     sequelize,
-    tableName: "users",
+    tableName: "cart_items",
     timestamps: true,
     underscored: true,
+    indexes: [
+      {
+        fields: ["cart_id"],
+      },
+    ],
   },
 );
 
-export default User;
+export default CartItem;

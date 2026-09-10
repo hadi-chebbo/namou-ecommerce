@@ -7,44 +7,46 @@ import {
 } from "sequelize";
 import sequelize from "../sequelize";
 
-class User extends Model<
-  InferAttributes<User>,
-  InferCreationAttributes<User>
+class Order extends Model<
+  InferAttributes<Order>,
+  InferCreationAttributes<Order>
 > {
   declare id: CreationOptional<string>;
-  declare name: string;
-  declare email: string;
-  declare passwordHash: string;
-  declare emailVerifiedAt: Date | null;
+  declare userId: string;
+  declare address: string;
+  declare total: string;
+  declare status: "pending" | "confirmed" | "cancelled";
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 }
 
-User.init(
+Order.init(
   {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    name: {
-      type: DataTypes.STRING,
+    userId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      field: "user_id",
+    },
+    address: {
+      type: DataTypes.TEXT,
       allowNull: false,
     },
-    email: {
-      type: DataTypes.STRING,
+    total: {
+      type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
-      unique: true,
+      validate: {
+        min: 0,
+      },
     },
-    passwordHash: {
-      type: DataTypes.STRING,
+    status: {
+      type: DataTypes.ENUM("pending", "confirmed", "cancelled"),
       allowNull: false,
-      field: "password_hash",
-    },
-    emailVerifiedAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      field: "email_verified_at",
+      defaultValue: "pending",
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -59,10 +61,15 @@ User.init(
   },
   {
     sequelize,
-    tableName: "users",
+    tableName: "orders",
     timestamps: true,
     underscored: true,
+    indexes: [
+      {
+        fields: ["user_id"],
+      },
+    ],
   },
 );
 
-export default User;
+export default Order;

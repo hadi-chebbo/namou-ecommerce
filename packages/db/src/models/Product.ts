@@ -7,44 +7,60 @@ import {
 } from "sequelize";
 import sequelize from "../sequelize";
 
-class User extends Model<
-  InferAttributes<User>,
-  InferCreationAttributes<User>
+class Product extends Model<
+  InferAttributes<Product>,
+  InferCreationAttributes<Product>
 > {
   declare id: CreationOptional<string>;
-  declare name: string;
-  declare email: string;
-  declare passwordHash: string;
-  declare emailVerifiedAt: Date | null;
+  declare slug: string;
+  declare title: string;
+  declare description: string;
+  declare price: string;
+  declare stockQuantity: number;
+  declare imageUrl: string | null;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 }
 
-User.init(
+Product.init(
   {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    email: {
+    slug: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
     },
-    passwordHash: {
+    title: {
       type: DataTypes.STRING,
       allowNull: false,
-      field: "password_hash",
     },
-    emailVerifiedAt: {
-      type: DataTypes.DATE,
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    price: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+      validate: {
+        min: 0.01,
+      },
+    },
+    stockQuantity: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: "stock_quantity",
+      validate: {
+        min: 0,
+      },
+    },
+    imageUrl: {
+      type: DataTypes.STRING,
       allowNull: true,
-      field: "email_verified_at",
+      field: "image_url",
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -59,10 +75,10 @@ User.init(
   },
   {
     sequelize,
-    tableName: "users",
+    tableName: "products",
     timestamps: true,
     underscored: true,
   },
 );
 
-export default User;
+export default Product;
