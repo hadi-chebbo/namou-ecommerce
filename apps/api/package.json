@@ -1,8 +1,8 @@
 {
-  "name": "@namou/api",
+  "name": "@ecommerce/api",
   "version": "1.0.0",
   "private": true,
-  "description": "Namou Properties e-commerce API",
+  "description": "e-commerce API",
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
@@ -16,6 +16,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@ecommerce/db": "*",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
