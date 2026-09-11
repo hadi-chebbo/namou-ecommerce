@@ -1,13 +1,13 @@
+import { Navigate, Route, Routes } from "react-router-dom"
+import LoginPage from "./pages/LoginPage"
+
 function App() {
 
   return (
-    <>
-      <section id="center">
-        <div>
-          <h1 className="text-center">Get started</h1>
-        </div>
-      </section>
-    </>
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
+    </Routes>
   )
 }
 
