@@ -7,6 +7,10 @@
     "packages/*"
   ],
   "scripts": {
+    "dev": "concurrently \"npm run dev --workspace=@ecommerce/api\" \"npm run dev --workspace=@ecommerce/web\"",
     "build": "npm run build --workspaces"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5"
   }
 }
