@@ -15,6 +15,7 @@ class Variant extends Model<
   declare productId: string;
   declare options: Record<string, string>;
   declare price: string;
+  declare imageUrl: string;
   declare stockQuantity: number;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
@@ -42,6 +43,11 @@ Variant.init(
       validate: {
         min: 0.01,
       },
+    },
+    imageUrl: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: "image_url",
     },
     stockQuantity: {
       type: DataTypes.INTEGER,

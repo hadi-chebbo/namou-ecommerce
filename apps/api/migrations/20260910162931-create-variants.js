@@ -33,6 +33,11 @@ module.exports = {
           allowNull: false,
         },
 
+        image_url: {
+          type: Sequelize.STRING,
+          allowNull: true,
+        },
+
         stock_quantity: {
           type: Sequelize.INTEGER,
           defaultValue: 0,
