@@ -89,6 +89,7 @@ XL     → $25
 Each variant therefore has its own price and stock. ( At first price was only available at the product level but I thought that a small t-shirt and a large t-shirt can have different prices that's why I added price to the variants table )
 
 `options` I used PostgreSQL JSONB because different products can have different options such as size, color, storage, etc.
+`image_url` I used an image url here because a variant can have different image from the image existing in the parent product ( if this field is null the image of the parent product will be used)
 
 ### Carts
 
