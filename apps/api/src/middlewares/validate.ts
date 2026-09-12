@@ -21,9 +21,6 @@ export function validate(schema: ZodSchema, target: Target = "body") {
       return;
     }
 
-    // Replace the target with the parsed (and potentially coerced) data
-    (req as unknown as Record<string, unknown>)[target] = result.data;
-
     next();
   };
 }
