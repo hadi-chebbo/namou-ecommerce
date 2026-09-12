@@ -14,6 +14,7 @@ class User extends Model<
   declare id: CreationOptional<string>;
   declare name: string;
   declare email: string;
+  declare role: "user" | "admin";
   declare passwordHash: string;
   declare emailVerifiedAt: Date | null;
   declare createdAt: CreationOptional<Date>;
@@ -35,6 +36,10 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
+    },
+    role: {
+      type: DataTypes.ENUM("user", "admin"),
+      allowNull: false,
     },
     passwordHash: {
       type: DataTypes.STRING,
