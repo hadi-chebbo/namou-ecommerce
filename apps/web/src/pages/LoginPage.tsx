@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -15,6 +16,8 @@ import maveLoginImage from "../assets/images/mave-login.png";
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState("");
+
+  const navigate = useNavigate();
 
   const {
     register,
@@ -34,8 +37,7 @@ export default function LoginPage() {
 
       await authService.login(data);
 
-      // We'll handle authenticated navigation
-      // when we build the application shell.
+      navigate("/products");
     } catch (error: any) {
       setServerError(
         error?.response?.data?.message ||
