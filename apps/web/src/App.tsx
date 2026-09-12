@@ -5,6 +5,7 @@ import ProductsPage from "./pages/ProductsPage";
 
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { AppLayout } from "./layouts/AppLayout";
+import ProductDetailsPage from "./pages/ProductDetailsPage";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
           <Route path="/products" element={<ProductsPage />} />
+          <Route path="/products/:slug" element={<ProductDetailsPage />} />
         </Route>
       </Route>
 
