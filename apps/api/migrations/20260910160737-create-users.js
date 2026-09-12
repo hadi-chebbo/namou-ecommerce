@@ -24,6 +24,11 @@ module.exports = {
           unique: true,
         },
 
+        role: {
+          type: Sequelize.ENUM("user", "admin"),
+          allowNull: false,
+        },
+
         password_hash: {
           type: Sequelize.STRING,
           allowNull: false,

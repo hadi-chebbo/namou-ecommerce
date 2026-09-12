@@ -1,62 +1,69 @@
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
+type UserRole = "user" | "admin";
+
 interface JwtPayload {
-    userId: string,
+  userId: string;
+  role: UserRole;
 }
 
 declare global {
-    namespace Express {
-        interface Request {
-            user?: JwtPayload;
-        }
+  namespace Express {
+    interface Request {
+      user?: JwtPayload;
     }
+  }
 }
 
-function getJwtSecret(): string{
-    const secret = process.env.JWT_SECRET;
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
 
-    if(!secret) {
-        throw new Error("JWT_SECRET is not configured");
-    }
+  if (!secret) {
+    throw new Error("JWT_SECRET is not configured");
+  }
 
-    return secret;
+  return secret;
 }
 
-export function authenticate(req: Request, res: Response, next: NextFunction): void {
-    const token = req.cookies?.access_token as string | undefined;
+export function authenticate(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  const token = req.cookies?.access_token as string | undefined;
 
-    if(!token) {
-        res.status(401).json({
-            message: "Authentication required",
-        });
+  if (!token) {
+    res.status(401).json({
+      message: "Authentication required",
+    });
+    return;
+  }
 
-        return;
+  try {
+    const decoded = jwt.verify(token, getJwtSecret());
+
+    if (
+      typeof decoded !== "object" ||
+      decoded === null ||
+      typeof decoded.userId !== "string" ||
+      (decoded.role !== "user" && decoded.role !== "admin")
+    ) {
+      res.status(401).json({
+        message: "Invalid authentication token",
+      });
+      return;
     }
 
-    try {
-        const decoded = jwt.verify(token, getJwtSecret());
+    req.user = {
+      userId: decoded.userId,
+      role: decoded.role,
+    };
 
-        if(
-            typeof decoded !== "object" ||
-            decoded == null ||
-            typeof decoded.userId !== "string"
-        ) {
-            res.status(401).json({
-                message: "Invalid authentication token",
-            });
-
-            return;
-        }
-
-        req.user = {
-            userId: decoded.userId,
-        };
-
-        next();
-    } catch {
-        res.status(401).json({
-            message: "Invalid or expired token",
-        });
-    }
+    next();
+  } catch {
+    res.status(401).json({
+      message: "Invalid or expired token",
+    });
+  }
 }

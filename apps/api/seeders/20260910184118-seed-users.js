@@ -12,6 +12,7 @@ module.exports = {
         id: Sequelize.literal('gen_random_uuid()'),
         name: 'Test User',
         email: 'test@namou.ae',
+        role: 'user',
         password_hash: passwordHash,
         email_verified_at: new Date(),
         created_at: new Date(),
