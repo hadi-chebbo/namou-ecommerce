@@ -16,4 +16,12 @@ router.get(
     productController.getProductListings,
 );
 
+router.get(
+    "/:slug",
+    authenticate,
+    authorize("user"),
+    validate(productSchema.productDetailsSchema, 'params'),
+    productController.getProductDetails,
+);
+
 export default router;
