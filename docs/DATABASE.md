@@ -61,6 +61,7 @@ I chose UUIDs across all tables because they give each record a unique ID withou
 
 - UUID primary key.
 - Unique email for authentication.
+- Role "user" or "admin" added to accept RBAC in the future if needed
 - Passwords stored as hashes, not a plain text.
 - `email_verified_at` is nullable because verification is optional/not completed immediately and this field is added because if later on we wanted to introduce email verfication to the    system it will be ready.
 - Timestamps are used for record tracking.
