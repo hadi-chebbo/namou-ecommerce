@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Product, ProductVariant as Variant } from "../../types/product";
+import { Link } from "react-router-dom";
 
 type ProductCardProps = {
   product: Product;
@@ -30,7 +31,8 @@ export function ProductCard({
   }
 
   return (
-    <article className="group relative">
+    <Link to={`/products/${product.slug}`} className="block">
+      <article className="group relative">
       {/* Wishlist button */}
       <button
         type="button"
@@ -84,7 +86,11 @@ export function ProductCard({
                 <button
                   key={variant.id}
                   type="button"
-                  onClick={() => setSelectedVariant(variant)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setSelectedVariant(variant);
+                  }}
                   aria-pressed={isActive}
                   className={`rounded-full border px-2.5 py-1 text-xs transition-colors duration-200 ${
                     isActive
@@ -100,5 +106,6 @@ export function ProductCard({
         )}
       </div>
     </article>
+    </Link>
   );
 }
