@@ -1,20 +1,25 @@
-import { Navigate, Route, Routes } from "react-router-dom"
-import LoginPage from "./pages/LoginPage"
-import { ProtectedRoute } from "./components/auth/ProtectedRoute"
-import ProductsPage from "./pages/ProductsPage"
+import { Navigate, Route, Routes } from "react-router-dom";
+
+import LoginPage from "./pages/LoginPage";
+import ProductsPage from "./pages/ProductsPage";
+
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { AppLayout } from "./layouts/AppLayout";
 
 function App() {
-
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
-      <Route path="*" element={<Navigate to="/login" replace />} />
 
       <Route element={<ProtectedRoute />}>
-        <Route path="/products" element={<ProductsPage />} />
+        <Route element={<AppLayout />}>
+          <Route path="/products" element={<ProductsPage />} />
+        </Route>
       </Route>
+
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
-  )
+  );
 }
 
-export default App
+export default App;
