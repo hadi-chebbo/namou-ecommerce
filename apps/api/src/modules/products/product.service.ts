@@ -1,6 +1,7 @@
 import { Product } from "@ecommerce/db";
 import { Variant } from "@ecommerce/db";
 import type { ProductListingQuery } from "./product.schema";
+import { AppError } from "../../utils/AppError";
 
 export async function getProducts({
     page,
@@ -29,4 +30,25 @@ export async function getProducts({
             totalPages: Math.ceil(count / limit),
         },
     };
+}
+
+export async function getProductDetails(slug: string) {
+    const result = await Product.findOne({
+        where: {
+            slug,
+        },
+
+        include: [
+            {
+                model: Variant,
+                as: "variants",
+            },
+        ],
+    });
+
+    if(!result) {
+        throw new AppError("Product not found", 404);
+    }
+
+    return result;
 }
