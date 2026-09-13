@@ -38,6 +38,7 @@ WishlistItem.init(
       type: DataTypes.DATE,
       allowNull: false,
       field: "created_at",
+      defaultValue: DataTypes.NOW,
     },
   },
   {
