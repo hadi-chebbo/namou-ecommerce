@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { Lottie } from "lottie-react";
 
 import { Loader } from "../components/ui/Loader";
 import { WishlistButton } from "../components/ui/WishListButton";
 import { VariantSelector } from "../components/product/VariantSelector";
 import { useProduct } from "../hooks/useProduct";
+import { useAddToCart } from "../hooks/useCart";
 import type { ProductVariant } from "../types/product";
+import cartSuccessAnimation from "../assets/animations/Added to Cart.json";
 
 function resolveVariant(
   variants: ProductVariant[],
@@ -22,12 +25,15 @@ export default function ProductDetailsPage() {
   const { slug } = useParams<{ slug: string }>();
   const { data: product, isLoading, isError } = useProduct(slug ?? "");
 
+  const addToCartMutation = useAddToCart();
+
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, string>
   >({});
   const [quantity, setQuantity] = useState(1);
   const [variantNotice, setVariantNotice] = useState<string | null>(null);
   const [showVariantNotice, setShowVariantNotice] = useState(false);
+  const [isAddedToCart, setIsAddedToCart] = useState(false);
 
   // Pre-select default variant options once product data loads
   useEffect(() => {
@@ -158,7 +164,22 @@ export default function ProductDetailsPage() {
   function handleAddToCart() {
     if (!canAddToCart) return;
 
-    // Execute cart mutation here...
+    addToCartMutation.mutate(
+      {
+        productSlug: product!.slug,
+        variantId: selectedVariant?.id,
+        quantity,
+      },
+      {
+        onSuccess: () => {
+          setIsAddedToCart(true);
+
+          setTimeout(() => {
+            setIsAddedToCart(false);
+          }, 1800);
+        },
+      }
+    );
   }
 
   return (
@@ -183,7 +204,10 @@ export default function ProductDetailsPage() {
 
             {/* Wishlist button overlay visible on mobile devices only */}
             <div className="absolute right-4 top-4 lg:hidden">
-              <WishlistButton variant="onImage" slug={product.slug}/>
+              <WishlistButton
+                variant="onImage"
+                slug={product.slug}
+              />
             </div>
           </div>
 
@@ -221,9 +245,8 @@ export default function ProductDetailsPage() {
 
                 {variantNotice && (
                   <p
-                    className={`mt-4 text-xs text-[#8B8478] transition-opacity duration-300 ${
-                      showVariantNotice ? "opacity-100" : "opacity-0"
-                    }`}
+                    className={`mt-4 text-xs text-[#8B8478] transition-opacity duration-300 ${showVariantNotice ? "opacity-100" : "opacity-0"
+                      }`}
                   >
                     {variantNotice}
                   </p>
@@ -244,7 +267,12 @@ export default function ProductDetailsPage() {
                     onClick={() =>
                       setQuantity((q) => Math.max(1, q - 1))
                     }
-                    disabled={!canAddToCart || quantity <= 1}
+                    disabled={
+                      !canAddToCart ||
+                      quantity <= 1 ||
+                      addToCartMutation.isPending ||
+                      isAddedToCart
+                    }
                     aria-label="Decrease quantity"
                     className="text-lg text-[#1C1A16] transition-opacity hover:opacity-60 disabled:cursor-not-allowed disabled:opacity-30"
                   >
@@ -260,7 +288,12 @@ export default function ProductDetailsPage() {
                     onClick={() =>
                       setQuantity((q) => Math.min(stock, q + 1))
                     }
-                    disabled={!canAddToCart || quantity >= stock}
+                    disabled={
+                      !canAddToCart ||
+                      quantity >= stock ||
+                      addToCartMutation.isPending ||
+                      isAddedToCart
+                    }
                     aria-label="Increase quantity"
                     className="text-lg text-[#1C1A16] transition-opacity hover:opacity-60 disabled:cursor-not-allowed disabled:opacity-30"
                   >
@@ -281,17 +314,38 @@ export default function ProductDetailsPage() {
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  disabled={!canAddToCart}
-                  className="h-12 flex-1 bg-[#1C1A16] px-6 text-sm font-medium text-white transition-opacity duration-200 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+                  disabled={
+                    !canAddToCart ||
+                    addToCartMutation.isPending ||
+                    isAddedToCart
+                  }
+                  className="flex h-12 flex-1 items-center justify-center gap-2 bg-[#1C1A16] px-6 text-sm font-medium text-white transition-opacity duration-200 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  {needsSelection
-                    ? "Select options"
-                    : isOutOfStock
-                      ? "Out of stock"
-                      : "Add to cart"}
+                  {isAddedToCart ? (
+                    <>
+                      <Lottie
+                        key="cart-success"
+                        src={cartSuccessAnimation}
+                        autoplay={true}
+                        loop={false}
+                        className="h-6 w-8 shrink-0 invert mb-1"
+                      />                      <span>Added to cart</span>
+                    </>
+                  ) : addToCartMutation.isPending ? (
+                    "Adding..."
+                  ) : needsSelection ? (
+                    "Select options"
+                  ) : isOutOfStock ? (
+                    "Out of stock"
+                  ) : (
+                    "Add to cart"
+                  )}
                 </button>
 
-                <WishlistButton variant="panel" slug={product.slug}/>
+                <WishlistButton
+                  variant="panel"
+                  slug={product.slug}
+                />
               </div>
 
               {isLowStock && (
