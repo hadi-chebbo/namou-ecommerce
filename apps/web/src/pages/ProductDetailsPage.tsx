@@ -183,7 +183,7 @@ export default function ProductDetailsPage() {
 
             {/* Wishlist button overlay visible on mobile devices only */}
             <div className="absolute right-4 top-4 lg:hidden">
-              <WishlistButton variant="onImage" />
+              <WishlistButton variant="onImage" slug={product.slug}/>
             </div>
           </div>
 
@@ -291,7 +291,7 @@ export default function ProductDetailsPage() {
                       : "Add to cart"}
                 </button>
 
-                <WishlistButton variant="panel" />
+                <WishlistButton variant="panel" slug={product.slug}/>
               </div>
 
               {isLowStock && (

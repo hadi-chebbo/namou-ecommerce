@@ -1,31 +1,47 @@
-import { useState } from "react";
+import {
+  useAddToWishlist,
+  useRemoveFromWishlist,
+  useWishlist,
+} from "../../hooks/useWishlist";
 
 type WishlistButtonProps = {
-  isWishlisted?: boolean;
-  onToggle?: (next: boolean) => void;
+  slug: string;
   variant?: "onImage" | "panel";
 };
 
 export function WishlistButton({
-  isWishlisted = false,
-  onToggle,
+  slug,
   variant = "onImage",
 }: WishlistButtonProps) {
-  const [wishlisted, setWishlisted] = useState(isWishlisted);
+  const { data: wishlist = [] } = useWishlist();
+  const addToWishlist = useAddToWishlist();
+  const removeFromWishlist = useRemoveFromWishlist();
+
+  const isWishlisted = wishlist.some(
+    (item) => item.product.slug === slug
+  );
 
   function handleClick(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    const next = !wishlisted;
-    setWishlisted(next);
-    onToggle?.(next);
+
+    if (isWishlisted) {
+      removeFromWishlist.mutate(slug);
+    } else {
+      addToWishlist.mutate(slug);
+    }
   }
+
+  const isPending =
+    addToWishlist.isPending || removeFromWishlist.isPending;
 
   const heart = (
     <svg
       viewBox="0 0 24 24"
       className={`h-4 w-4 transition-colors duration-200 ${
-        wishlisted ? "fill-[#A8503A] stroke-[#A8503A]" : "fill-none stroke-[#1C1A16]"
+        isWishlisted
+          ? "fill-[#A8503A] stroke-[#A8503A]"
+          : "fill-none stroke-[#1C1A16]"
       }`}
       strokeWidth={1.5}
     >
@@ -42,9 +58,12 @@ export function WishlistButton({
       <button
         type="button"
         onClick={handleClick}
-        aria-pressed={wishlisted}
-        aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
-        className="flex h-12 w-12 shrink-0 items-center justify-center border-l border-[#E5E0D8] transition-colors duration-200 hover:bg-[#F1EEE8]"
+        disabled={isPending}
+        aria-pressed={isWishlisted}
+        aria-label={
+          isWishlisted ? "Remove from wishlist" : "Add to wishlist"
+        }
+        className="flex h-12 w-12 shrink-0 items-center justify-center border-l border-[#E5E0D8] transition-colors duration-200 hover:bg-[#F1EEE8] disabled:cursor-not-allowed disabled:opacity-60"
       >
         {heart}
       </button>
@@ -55,9 +74,12 @@ export function WishlistButton({
     <button
       type="button"
       onClick={handleClick}
-      aria-pressed={wishlisted}
-      aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
-      className="flex h-9 w-9 items-center justify-center border border-[#E5E0D8] bg-[#FAF8F4] transition-colors duration-200 hover:border-[#1C1A16]"
+      disabled={isPending}
+      aria-pressed={isWishlisted}
+      aria-label={
+        isWishlisted ? "Remove from wishlist" : "Add to wishlist"
+      }
+      className="flex h-9 w-9 items-center justify-center border border-[#E5E0D8] bg-[#FAF8F4] transition-colors duration-200 hover:border-[#1C1A16] disabled:cursor-not-allowed disabled:opacity-60"
     >
       {heart}
     </button>
