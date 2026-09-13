@@ -14,6 +14,13 @@ export async function getCart(userId: string) {
           {
             model: Product,
             as: "product",
+
+            include: [
+              {
+                model: Variant,
+                as: "variants",
+              }
+            ]
           },
           {
             model: Variant,
