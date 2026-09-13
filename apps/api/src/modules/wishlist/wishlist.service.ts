@@ -1,4 +1,4 @@
-import { WishlistItem, Product } from "@ecommerce/db";
+import { WishlistItem, Product, Variant } from "@ecommerce/db";
 import { AppError } from "../../utils/AppError";
 
 export async function getWishListProducts(userId: string) {
@@ -10,6 +10,13 @@ export async function getWishListProducts(userId: string) {
             {
                 model: Product,
                 as: "product",
+
+                include: [
+                    {
+                        model: Variant,
+                        as: "variants",
+                    },
+                ],
             },
         ],
     });
