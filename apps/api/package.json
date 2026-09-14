@@ -9,7 +9,8 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "db:migrate": "sequelize-cli db:migrate",
-    "db:seed": "sequelize-cli db:seed:all"
+    "db:seed": "sequelize-cli db:seed:all",
+    "start:docker": "npm run start"
   },
   "keywords": [],
   "author": "",
@@ -38,6 +39,6 @@
     "@types/node": "^22.20.2",
     "sequelize-cli": "^6.6.5",
     "tsx": "^4.23.13",
-    "typescript": "^7.0.2"
+    "typescript": "^6.0.3"
   }
 }
