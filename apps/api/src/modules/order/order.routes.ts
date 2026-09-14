@@ -8,7 +8,7 @@ import { validate } from "../../middlewares/validate";
 const router = Router();
 
 router.post(
-    "/",
+    "/order",
     authenticate,
     authorize("user"),
     validate(createOrderSchema, "body"),

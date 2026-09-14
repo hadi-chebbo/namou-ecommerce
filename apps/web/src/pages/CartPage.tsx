@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Loader } from "../components/ui/Loader";
 import { CartItem } from "../components/cart/CartItem";
@@ -5,6 +6,8 @@ import { CartSummary } from "../components/cart/CartSummary";
 import { useCart, useClearCart } from "../hooks/useCart";
 
 export default function CartPage() {
+  const queryClient = useQueryClient();
+
   const { data: cart, isLoading, isError } = useCart();
   const clearCart = useClearCart();
 
@@ -31,14 +34,36 @@ export default function CartPage() {
   const items = [...cart.items].sort(
     (a, b) =>
       new Date(a.createdAt).getTime() -
-      new Date(b.createdAt).getTime()
+      new Date(b.createdAt).getTime(),
   );
 
-  if (items.length === 0) {
-    return (
-      <div className="w-full px-6 py-10 sm:px-8 lg:px-10 xl:px-12 lg:py-14">
-        <CartHeader itemCount={0} />
+  const subtotal = items.reduce(
+    (total, item) =>
+      total +
+      Number(item.variant?.price ?? item.product.price) *
+        item.quantity,
+    0,
+  );
 
+  const handleOrderSuccess = () => {
+    queryClient.invalidateQueries({
+      queryKey: ["cart"],
+    });
+  };
+
+  return (
+    <div className="w-full px-6 py-10 sm:px-8 lg:px-10 xl:px-12 lg:py-14">
+      <CartHeader
+        itemCount={items.length}
+        onClear={
+          items.length > 0
+            ? () => clearCart.mutate()
+            : undefined
+        }
+        isClearing={clearCart.isPending}
+      />
+
+      {items.length === 0 ? (
         <div className="flex min-h-[40vh] items-center justify-center border-t border-[#E5E0D8]">
           <div className="text-center">
             <h2 className="text-lg font-medium text-[#1C1A16]">
@@ -57,35 +82,21 @@ export default function CartPage() {
             </Link>
           </div>
         </div>
-      </div>
-    );
-  }
+      ) : (
+        <div className="grid gap-12 lg:grid-cols-[1fr_360px]">
+          <section className="divide-y divide-[#E5E0D8] border-y border-[#E5E0D8]">
+            {items.map((item) => (
+              <CartItem key={item.id} item={item} />
+            ))}
+          </section>
 
-  const subtotal = items.reduce(
-    (total, item) =>
-      total +
-      Number(item.variant?.price ?? item.product.price) *
-        item.quantity,
-    0
-  );
-
-  return (
-    <div className="w-full px-6 py-10 sm:px-8 lg:px-10 xl:px-12 lg:py-14">
-      <CartHeader
-        itemCount={items.length}
-        onClear={() => clearCart.mutate()}
-        isClearing={clearCart.isPending}
-      />
-
-      <div className="grid gap-12 lg:grid-cols-[1fr_360px]">
-        <section className="divide-y divide-[#E5E0D8] border-y border-[#E5E0D8]">
-          {items.map((item) => (
-            <CartItem key={item.id} item={item} />
-          ))}
-        </section>
-
-        <CartSummary subtotal={subtotal} />
-      </div>
+          <CartSummary
+            subtotal={subtotal}
+            items={items}
+            onOrderSuccess={handleOrderSuccess}
+          />
+        </div>
+      )}
     </div>
   );
 }
