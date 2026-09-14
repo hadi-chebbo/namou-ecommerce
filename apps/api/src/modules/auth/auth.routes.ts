@@ -3,12 +3,14 @@ import * as authController from "./auth.controller";
 import { loginSchema } from "./auth.validation";
 import { validate } from "../../middlewares/validate";
 import { authenticate } from "../../middlewares/authenticate";
+import { authRateLimiter } from "../../middlewares/rateLimiter";
 
 
 const router = Router();
 
 router.post(
     "/login",
+    authRateLimiter,
     validate(loginSchema, "body"),
     authController.login,
 );

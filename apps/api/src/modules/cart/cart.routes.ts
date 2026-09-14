@@ -9,8 +9,11 @@ import {
 import { validate } from "../../middlewares/validate";
 import { authenticate } from "../../middlewares/authenticate";
 import { authorize } from "../../middlewares/authorize";
+import { publicApiRateLimiter } from "../../middlewares/rateLimiter";
 
 const router = Router();
+
+router.use(publicApiRateLimiter);
 
 router.get(
   "/",

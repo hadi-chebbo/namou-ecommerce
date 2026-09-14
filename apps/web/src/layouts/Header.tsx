@@ -2,33 +2,25 @@ import { useEffect, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useLogout } from "../hooks/useAuth";
 
-function MenuIcon() {
+function MenuIcon({ isOpen }: { isOpen: boolean }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      className="h-5 w-5"
-      aria-hidden="true"
-    >
-      <path d="M4 7h16M4 12h16M4 17h16" />
-    </svg>
-  );
-}
-
-function CloseIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      className="h-5 w-5"
-      aria-hidden="true"
-    >
-      <path d="M6 6l12 12M18 6L6 18" />
-    </svg>
+    <span className="relative flex h-5 w-5 items-center justify-center">
+      <span
+        className={`absolute h-px w-5 bg-current transition-all duration-300 ease-out ${
+          isOpen ? "rotate-45" : "-translate-y-1.5"
+        }`}
+      />
+      <span
+        className={`absolute h-px w-5 bg-current transition-all duration-300 ease-out ${
+          isOpen ? "opacity-0" : "opacity-100"
+        }`}
+      />
+      <span
+        className={`absolute h-px w-5 bg-current transition-all duration-300 ease-out ${
+          isOpen ? "-rotate-45" : "translate-y-1.5"
+        }`}
+      />
+    </span>
   );
 }
 
@@ -83,7 +75,7 @@ export function Header() {
   const handleLogout = async () => {
     await logout.mutateAsync();
     navigate("/login");
-  }
+  };
 
   useEffect(() => {
     function handleWishlistAdded() {
@@ -112,9 +104,21 @@ export function Header() {
     setIsMenuOpen(false);
   };
 
+  const toggleMenu = () => {
+    if (isMenuOpen) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  };
+
   useEffect(() => {
     if (isMenuOpen) return;
-    const timer = setTimeout(() => setIsMenuMounted(false), 300);
+
+    const timer = setTimeout(() => {
+      setIsMenuMounted(false);
+    }, 300);
+
     return () => clearTimeout(timer);
   }, [isMenuOpen]);
 
@@ -125,42 +129,55 @@ export function Header() {
           0%, 100% { color: #1C1A16; }
           35% { color: #B23A2E; }
         }
+
         @keyframes wishlist-icon-pop {
           0% { transform: scale(1); }
           30% { transform: scale(1.32); }
           55% { transform: scale(0.94); }
           100% { transform: scale(1); }
         }
+
         @keyframes wishlist-fill-pulse {
           0%, 100% { fill: transparent; }
           40% { fill: currentColor; }
         }
+
         @keyframes wishlist-ring {
           0% { transform: scale(0.5); opacity: 0.5; }
           100% { transform: scale(2.3); opacity: 0; }
         }
+
         @keyframes wishlist-underline {
           0% { transform: scaleX(0); opacity: 0.6; }
           60% { transform: scaleX(1); opacity: 1; }
           100% { transform: scaleX(1); opacity: 0; }
         }
+
         .wishlist-color-pulse {
           animation: wishlist-color-pulse 0.7s ease-out;
         }
+
         .wishlist-icon-pop {
           animation: wishlist-icon-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
+
         .wishlist-fill-pulse {
           animation: wishlist-fill-pulse 0.7s ease-out;
         }
+
         .wishlist-ring {
           position: absolute;
           inset: -7px;
           border-radius: 9999px;
-          background: radial-gradient(circle, rgba(178,58,46,0.5) 0%, rgba(178,58,46,0) 70%);
+          background: radial-gradient(
+            circle,
+            rgba(178, 58, 46, 0.5) 0%,
+            rgba(178, 58, 46, 0) 70%
+          );
           animation: wishlist-ring 0.7s ease-out;
           pointer-events: none;
         }
+
         .wishlist-underline {
           position: absolute;
           left: 0;
@@ -178,11 +195,12 @@ export function Header() {
           {/* Mobile menu button */}
           <button
             type="button"
-            onClick={openMenu}
-            className="flex items-center justify-center text-[#1C1A16] md:hidden cursor-pointer"
-            aria-label="Open menu"
+            onClick={toggleMenu}
+            className="flex cursor-pointer items-center justify-center text-[#1C1A16] md:hidden"
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMenuOpen}
           >
-            <MenuIcon />
+            <MenuIcon isOpen={isMenuOpen} />
           </button>
 
           {/* Logo */}
@@ -221,9 +239,15 @@ export function Header() {
               {isWishlistAnimating && (
                 <span className="wishlist-ring" aria-hidden="true" />
               )}
-              <HeartIcon pulsing={isWishlistAnimating} className="h-4 w-4" />
+
+              <HeartIcon
+                pulsing={isWishlistAnimating}
+                className="h-4 w-4"
+              />
+
               <span className="relative">
                 Wishlist
+
                 {isWishlistAnimating && (
                   <span className="wishlist-underline" aria-hidden="true" />
                 )}
@@ -252,7 +276,7 @@ export function Header() {
             className="ml-auto hidden text-sm text-[#8B8478] transition-colors hover:text-[#1C1A16] disabled:opacity-50 md:block"
           >
             {logout.isPending ? "Signing out..." : "Sign out"}
-        </button>
+          </button>
 
           {/* Mobile actions */}
           <div className="ml-auto flex items-center gap-4 md:hidden">
@@ -266,6 +290,7 @@ export function Header() {
               {isWishlistAnimating && (
                 <span className="wishlist-ring" aria-hidden="true" />
               )}
+
               <HeartIcon pulsing={isWishlistAnimating} />
             </Link>
 
@@ -311,10 +336,10 @@ export function Header() {
               <button
                 type="button"
                 onClick={closeMenu}
-                className="text-[#1C1A16] cursor-pointer"
+                className="cursor-pointer text-[#1C1A16]"
                 aria-label="Close menu"
               >
-                <CloseIcon />
+                <MenuIcon isOpen={true} />
               </button>
             </div>
 
@@ -324,7 +349,9 @@ export function Header() {
                 onClick={closeMenu}
                 className={({ isActive }) =>
                   `border-b border-[#E5E0D8] py-4 text-sm transition-colors ${
-                    isActive ? "font-medium text-[#1C1A16]" : "text-[#8B8478]"
+                    isActive
+                      ? "font-medium text-[#1C1A16]"
+                      : "text-[#8B8478]"
                   }`
                 }
               >
@@ -336,7 +363,9 @@ export function Header() {
                 onClick={closeMenu}
                 className={({ isActive }) =>
                   `border-b border-[#E5E0D8] py-4 text-sm transition-colors ${
-                    isActive ? "font-medium text-[#1C1A16]" : "text-[#8B8478]"
+                    isActive
+                      ? "font-medium text-[#1C1A16]"
+                      : "text-[#8B8478]"
                   }`
                 }
               >
@@ -348,7 +377,9 @@ export function Header() {
                 onClick={closeMenu}
                 className={({ isActive }) =>
                   `border-b border-[#E5E0D8] py-4 text-sm transition-colors ${
-                    isActive ? "font-medium text-[#1C1A16]" : "text-[#8B8478]"
+                    isActive
+                      ? "font-medium text-[#1C1A16]"
+                      : "text-[#8B8478]"
                   }`
                 }
               >
@@ -357,14 +388,6 @@ export function Header() {
             </nav>
 
             <div className="mt-auto border-t border-[#E5E0D8] pt-6">
-              <Link
-                to="/profile"
-                onClick={closeMenu}
-                className="block py-3 text-sm text-[#1C1A16] transition-colors hover:text-[#8B8478]"
-              >
-                Profile
-              </Link>
-
               <button
                 type="button"
                 onClick={() => {
@@ -375,7 +398,7 @@ export function Header() {
                 className="py-3 text-sm text-[#8B8478] transition-colors hover:text-[#1C1A16] disabled:opacity-50"
               >
                 {logout.isPending ? "Signing out..." : "Sign out"}
-            </button>
+              </button>
             </div>
           </aside>
         </div>
