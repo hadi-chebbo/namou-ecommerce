@@ -26,19 +26,27 @@ git clone https://github.com/hadi-chebbo/namou-ecommerce.git
 cd namou-ecommerce
 ```
 
-### 2. Start the application
+### 2. Configure environment variables
+
+Create a `.env` file in the project root:
+
+```env
+JWT_SECRET=your-jwt-secret
+```
+
+### 3. Start the application
 
 ```bash
 docker compose up --build
 ```
 
-### 3. Run database migrations
+### 4. Run database migrations
 
 ```bash
 docker compose exec api npx sequelize-cli db:migrate
 ```
 
-### 4. Seed the database
+### 5. Seed the database
 
 ```bash
 docker compose exec api npx sequelize-cli db:seed:all
