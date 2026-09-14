@@ -93,3 +93,5 @@ I added rate limiting to help prevent excessive requests and basic abuse of the 
 Login has a stricter limit to help prevent brute-force attempts.
 Public endpoints such as products have a more relaxed limit since they are accessed during normal browsing.
 The limits are handled using express-rate-limit and applied at the route level.
+
+Order creation uses a database transaction because it involves multiple related changes. It also locks the relevant product/variant rows while checking and updating stock, preventing two users from purchasing the same remaining quantity at the same time. If any step fails, the transaction rolls everything back.
