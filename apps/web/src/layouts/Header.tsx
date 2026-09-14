@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useLogout } from "../hooks/useAuth";
 
 function MenuIcon() {
   return (
@@ -75,6 +76,14 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMenuMounted, setIsMenuMounted] = useState(false);
   const [isWishlistAnimating, setIsWishlistAnimating] = useState(false);
+
+  const logout = useLogout();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout.mutateAsync();
+    navigate("/login");
+  }
 
   useEffect(() => {
     function handleWishlistAdded() {
@@ -238,10 +247,12 @@ export function Header() {
           {/* Desktop sign out */}
           <button
             type="button"
-            className="ml-auto hidden text-sm text-[#8B8478] transition-colors hover:text-[#1C1A16] md:block"
+            onClick={handleLogout}
+            disabled={logout.isPending}
+            className="ml-auto hidden text-sm text-[#8B8478] transition-colors hover:text-[#1C1A16] disabled:opacity-50 md:block"
           >
-            Sign out
-          </button>
+            {logout.isPending ? "Signing out..." : "Sign out"}
+        </button>
 
           {/* Mobile actions */}
           <div className="ml-auto flex items-center gap-4 md:hidden">
@@ -356,11 +367,15 @@ export function Header() {
 
               <button
                 type="button"
-                onClick={closeMenu}
-                className="py-3 text-sm text-[#8B8478] transition-colors hover:text-[#1C1A16]"
+                onClick={() => {
+                  closeMenu();
+                  handleLogout();
+                }}
+                disabled={logout.isPending}
+                className="py-3 text-sm text-[#8B8478] transition-colors hover:text-[#1C1A16] disabled:opacity-50"
               >
-                Sign out
-              </button>
+                {logout.isPending ? "Signing out..." : "Sign out"}
+            </button>
             </div>
           </aside>
         </div>
