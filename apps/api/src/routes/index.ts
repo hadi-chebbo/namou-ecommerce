@@ -11,6 +11,6 @@ router.use("/auth", authRoutes);
 router.use("/products", productRoutes);
 router.use("/wishlist", wishlistRoutes);
 router.use("/cart", cartRoutes);
-router.use("/order", orderRoutes);
+router.use("/orders", orderRoutes);
 
 export default router;
