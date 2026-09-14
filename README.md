@@ -66,7 +66,7 @@ Use these credentials to log into the application.
 ## URLs
 
 ```text
-Frontend: localhost:5173
+Frontend: localhost:80
 API:      localhost:3000
 ```
 

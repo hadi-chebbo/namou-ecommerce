@@ -254,7 +254,7 @@ export function CheckoutModal({
               {createOrder.isError && (
                 <p className="mt-4 text-sm text-red-600">
                   Something went wrong while placing your order.
-                  Please try again.
+                  Ensure you provided a valid address and please try again.
                 </p>
               )}
             </div>
