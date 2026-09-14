@@ -88,3 +88,8 @@ Passwords are hashed using bcrypt and are never stored directly in the database.
 Protected routes use authentication middleware, while authorization middleware is used when a specific role is required. Incoming request data is also validated using Zod before reaching the application logic.
 
 The backend also has centralized error handling. Application errors are handled through a common error middleware so that the API can return consistent responses without exposing unnecessary internal details.
+
+I added rate limiting to help prevent excessive requests and basic abuse of the API.
+Login has a stricter limit to help prevent brute-force attempts.
+Public endpoints such as products have a more relaxed limit since they are accessed during normal browsing.
+The limits are handled using express-rate-limit and applied at the route level.

@@ -4,8 +4,11 @@ import { createOrderSchema } from "./order.schema";
 import { authenticate } from "../../middlewares/authenticate";
 import { authorize } from "../../middlewares/authorize";
 import { validate } from "../../middlewares/validate";
+import { publicApiRateLimiter } from "../../middlewares/rateLimiter";
 
 const router = Router();
+
+router.use(publicApiRateLimiter);
 
 router.post(
     "/order",
